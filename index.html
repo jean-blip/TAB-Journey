@@ -1,0 +1,411 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .journey { padding: 1.5rem 0; }
+  .phase { margin-bottom: 1.5rem; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; }
+  .phase-header { display: flex; align-items: center; gap: 12px; padding: 0.875rem 1.25rem; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .phase-badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; }
+  .phase-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); }
+  .phase-subtitle { font-size: 12px; color: var(--color-text-secondary); margin-top: 1px; }
+  .phase-body { padding: 1rem 1.25rem; }
+  .principle-bar { display: flex; align-items: center; gap: 12px; padding: 0.75rem 1.25rem; background: var(--color-background-secondary); border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .principle-icon { width: 28px; height: 28px; border-radius: 6px; background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; color: var(--color-text-secondary); }
+  .principle-text { font-size: 12px; color: var(--color-text-secondary); line-height: 1.55; }
+  .principle-text em { font-style: italic; color: var(--color-text-primary); font-weight: 500; }
+  .module { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); overflow: hidden; margin-bottom: 1rem; }
+  .module:last-child { margin-bottom: 0; }
+  .module-header { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; border-bottom: 0.5px solid var(--color-border-tertiary); gap: 12px; }
+  .module-left { display: flex; align-items: center; gap: 10px; }
+  .module-icon { width: 30px; height: 30px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+  .module-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+  .module-role { font-size: 11px; color: var(--color-text-secondary); }
+  .module-meta { display: flex; gap: 6px; flex-shrink: 0; }
+  .meta-pill { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; background: var(--color-background-secondary); color: var(--color-text-secondary); white-space: nowrap; }
+  .anchor-points { padding: 0.75rem 1rem; }
+  .ap { display: flex; gap: 10px; align-items: flex-start; padding: 0.5rem 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .ap:last-child { border-bottom: none; padding-bottom: 0; }
+  .ap:first-child { padding-top: 0; }
+  .ap-num { font-size: 10px; font-weight: 500; min-width: 28px; padding-top: 2px; flex-shrink: 0; }
+  .ap-content { flex: 1; }
+  .ap-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 2px; }
+  .ap-desc { font-size: 11px; color: var(--color-text-secondary); line-height: 1.55; }
+  .ap-tag { font-size: 10px; padding: 1px 6px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; align-self: flex-start; margin-top: 2px; }
+  .ai-note { display: flex; align-items: flex-start; gap: 6px; margin-top: 6px; padding: 5px 8px; border-radius: 4px; background: var(--color-background-secondary); border-left: 2px solid var(--color-border-secondary); }
+  .ai-note i { font-size: 11px; color: var(--color-text-tertiary); margin-top: 1px; flex-shrink: 0; }
+  .ai-note-text { font-size: 11px; color: var(--color-text-secondary); line-height: 1.5; }
+  .ai-note-text em { font-style: italic; color: var(--color-text-primary); }
+  .connector { display: flex; align-items: center; gap: 8px; padding: 0.375rem 1.25rem; font-size: 10px; color: var(--color-text-tertiary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+  .connector-line { flex: 1; height: 0.5px; background: var(--color-border-tertiary); }
+  .truth-box { border-left: 3px solid; padding: 0.625rem 0.875rem; border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; margin-top: 0.875rem; font-size: 12px; line-height: 1.6; color: var(--color-text-secondary); }
+  .truth-box em { font-style: italic; color: var(--color-text-primary); }
+  .intake-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 0.875rem; }
+  .intake-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 0.625rem 0.75rem; }
+  .intake-num { font-size: 10px; font-weight: 500; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+  .intake-label { font-size: 12px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 2px; }
+  .intake-desc { font-size: 11px; color: var(--color-text-secondary); line-height: 1.5; }
+  .outcome-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+  .outcome-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 0.75rem; }
+  .outcome-label { font-size: 12px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 3px; display: flex; align-items: center; gap: 6px; }
+  .outcome-label i { font-size: 13px; color: var(--color-text-secondary); }
+  .outcome-desc { font-size: 11px; color: var(--color-text-secondary); line-height: 1.5; }
+  .timeline-bar { display: flex; gap: 4px; margin-top: 1rem; height: 28px; border-radius: var(--border-radius-md); overflow: hidden; }
+  .tbar-seg { display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; color: var(--color-text-primary); border-radius: 4px; white-space: nowrap; overflow: hidden; }
+  .acl-bridge { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; margin-bottom: 1.5rem; }
+  .acl-bridge-header { display: flex; align-items: center; gap: 12px; padding: 0.875rem 1.25rem; border-bottom: 0.5px solid var(--color-border-tertiary); background: var(--color-background-secondary); }
+  .acl-bridge-body { padding: 1rem 1.25rem; }
+  .acl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .acl-col { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+  .acl-col strong { font-weight: 500; color: var(--color-text-primary); display: block; margin-bottom: 4px; }
+  .m1 .module-icon { background: var(--color-background-info); color: var(--color-text-info); }
+  .m1 .module-header { background: var(--color-background-info); }
+  .m1 .ap-num { color: var(--color-text-info); }
+  .m1 .ap-tag { background: var(--color-background-info); color: var(--color-text-info); }
+  .m2 .module-icon { background: var(--color-background-success); color: var(--color-text-success); }
+  .m2 .module-header { background: var(--color-background-success); }
+  .m2 .ap-num { color: var(--color-text-success); }
+  .m2 .ap-tag { background: var(--color-background-success); color: var(--color-text-success); }
+  .m3 .module-icon { background: var(--color-background-warning); color: var(--color-text-warning); }
+  .m3 .module-header { background: var(--color-background-warning); }
+  .m3 .ap-num { color: var(--color-text-warning); }
+  .m3 .ap-tag { background: var(--color-background-warning); color: var(--color-text-warning); }
+  .m4 .module-icon { background: var(--color-background-danger); color: var(--color-text-danger); }
+  .m4 .module-header { background: var(--color-background-danger); }
+  .m4 .ap-num { color: var(--color-text-danger); }
+  .m4 .ap-tag { background: var(--color-background-danger); color: var(--color-text-danger); }
+  .badge-intake { background: var(--color-background-secondary); color: var(--color-text-secondary); }
+  .badge-program { background: var(--color-background-info); color: var(--color-text-info); }
+  .badge-completion { background: var(--color-background-success); color: var(--color-text-success); }
+  .badge-acl { background: var(--color-background-warning); color: var(--color-text-warning); }
+</style>
+
+<h2 class="sr-only">The Authority Bridge — TAB client journey with AI thread and ACL bridge</h2>
+
+<div class="journey">
+
+  <!-- INTAKE -->
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-badge badge-intake">Pre-program</span>
+      <div>
+        <div class="phase-title">Intake & Diagnostic Assessment</div>
+        <div class="phase-subtitle">Four lenses that reveal where the client is structurally stuck — before a single piece of work is built</div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="intake-grid">
+        <div class="intake-card">
+          <div class="intake-num">Assessment 1</div>
+          <div class="intake-label">Business strategy</div>
+          <div class="intake-desc">Vision, mission, positioning. Strategic container or building on sand?</div>
+        </div>
+        <div class="intake-card">
+          <div class="intake-num">Assessment 2</div>
+          <div class="intake-label">Authority awareness</div>
+          <div class="intake-desc">Do they confuse authority with visibility? Where does the mindset work start?</div>
+        </div>
+        <div class="intake-card">
+          <div class="intake-num">Assessment 3</div>
+          <div class="intake-label">Story relationship</div>
+          <div class="intake-desc">Still inside their story (The Ache) or working from distance (The Ink)?</div>
+        </div>
+        <div class="intake-card">
+          <div class="intake-num">Assessment 4</div>
+          <div class="intake-label">Content ecosystem</div>
+          <div class="intake-desc">Posts, frequency, articles, book status. Fragmented or directional?</div>
+        </div>
+      </div>
+      <div class="truth-box" style="border-color: var(--color-border-secondary); background: var(--color-background-secondary);">
+        <em>All four assessments feed directly into Anchor Point 1.</em> The Blueprint is not a generic template — it is built from the specific gaps and starting points revealed here.
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><div class="connector-line"></div>anchor point 1 begins<div class="connector-line"></div></div>
+
+  <!-- FOUR ANCHORS -->
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-badge badge-program">10 weeks · 4 authority anchors · 10 anchor points</span>
+      <div>
+        <div class="phase-title">The Four Authority Anchors</div>
+        <div class="phase-subtitle">Structure before visibility. Sequence is the methodology.</div>
+      </div>
+    </div>
+
+    <div class="principle-bar">
+      <div class="principle-icon"><i class="ti ti-adjustments-horizontal" aria-hidden="true"></i></div>
+      <div class="principle-text">
+        <em>Precisely developed, adapted to you.</em> Every anchor point is designed with intention and adjusted in real time to match the client's pace, style, and starting point. The sequence never changes. The delivery always does.
+      </div>
+    </div>
+
+    <div class="phase-body">
+
+      <!-- Anchor 1 -->
+      <div class="module m1">
+        <div class="module-header">
+          <div class="module-left">
+            <div class="module-icon"><i class="ti ti-layout-grid" aria-hidden="true"></i></div>
+            <div>
+              <div class="module-name">Authority Anchor 1 — The Authority Blueprint</div>
+              <div class="module-role">The Design</div>
+            </div>
+          </div>
+          <div class="module-meta">
+            <span class="meta-pill">3 anchor points</span>
+            <span class="meta-pill">Weeks 1–3</span>
+          </div>
+        </div>
+        <div class="anchor-points">
+          <div class="ap">
+            <div class="ap-num">AP 1</div>
+            <div class="ap-content">
+              <div class="ap-title">The four intake assessments & strategic baseline</div>
+              <div class="ap-desc">Business strategy, authority awareness, story relationship, content ecosystem. Mapping exactly where the client stands before anything is built.</div>
+            </div>
+            <span class="ap-tag">Foundation</span>
+          </div>
+          <div class="ap">
+            <div class="ap-num">AP 2</div>
+            <div class="ap-content">
+              <div class="ap-title">Authority source, scope & lens</div>
+              <div class="ap-desc">Where authority actually comes from. Defining exact boundaries. Identifying the unique framework that sees the problem differently than the market.</div>
+            </div>
+            <span class="ap-tag">Core IP</span>
+          </div>
+          <div class="ap">
+            <div class="ap-num">AP 3</div>
+            <div class="ap-content">
+              <div class="ap-title">Framework codification & application</div>
+              <div class="ap-desc">Translating the lens into a recognizable, repeatable methodology. Pattern visibility — making conscious what was previously intuitive.</div>
+              <div class="ai-note">
+                <i class="ti ti-cpu" aria-hidden="true"></i>
+                <div class="ai-note-text"><em>AI as clarifying mirror.</em> Not to build the framework — the practitioner already has it. AI helps surface, name, and sharpen what has been living intuitively in their work for years, turning it into something others can immediately recognize and use.</div>
+              </div>
+            </div>
+            <span class="ap-tag">Output</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Anchor 2 -->
+      <div class="module m2">
+        <div class="module-header">
+          <div class="module-left">
+            <div class="module-icon"><i class="ti ti-book" aria-hidden="true"></i></div>
+            <div>
+              <div class="module-name">Authority Anchor 2 — The Content Container</div>
+              <div class="module-role">The Body of Work</div>
+            </div>
+          </div>
+          <div class="module-meta">
+            <span class="meta-pill">4 anchor points</span>
+            <span class="meta-pill">Weeks 4–7</span>
+          </div>
+        </div>
+        <div class="anchor-points">
+          <div class="ap">
+            <div class="ap-num">AP 4</div>
+            <div class="ap-content">
+              <div class="ap-title">Narrative distance diagnostic & story positioning</div>
+              <div class="ap-desc">The Ache vs The Ink. Creating structural distance from lived experience so the story becomes transferable expertise, not a wound that keeps reopening.</div>
+            </div>
+            <span class="ap-tag">Mindset</span>
+          </div>
+          <div class="ap">
+            <div class="ap-num">AP 5</div>
+            <div class="ap-content">
+              <div class="ap-title">Coaching modalities & framework structure</div>
+              <div class="ap-desc">Codifying the client's methodologies. What goes into the container and what stays out. Boundaries that protect the writer and guide the reader.</div>
+            </div>
+            <span class="ap-tag">Structure</span>
+          </div>
+          <div class="ap">
+            <div class="ap-num">AP 6</div>
+            <div class="ap-content">
+              <div class="ap-title">Building the content container</div>
+              <div class="ap-desc">Book or structured body of articles as the central authority asset. Authored, not AI-generated. The mother document from which all content, talks, and client work flows.</div>
+            </div>
+            <span class="ap-tag">Build</span>
+          </div>
+          <div class="ap">
+            <div class="ap-num">AP 7</div>
+            <div class="ap-content">
+              <div class="ap-title">SEO, EEAT & AI search — why structure is what machines index</div>
+              <div class="ap-desc">How AI search actually works. Why scattered content stays invisible. Why a structured body of work is the most future-proof discoverability strategy available.</div>
+              <div class="ai-note">
+                <i class="ti ti-cpu" aria-hidden="true"></i>
+                <div class="ai-note-text"><em>AI as the discoverability landscape.</em> Understanding how AI search systems index structured bodies of work — and why this permanently changes what it means to build authority in public.</div>
+              </div>
+            </div>
+            <span class="ap-tag">Education</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Anchor 3 -->
+      <div class="module m3">
+        <div class="module-header">
+          <div class="module-left">
+            <div class="module-icon"><i class="ti ti-antenna" aria-hidden="true"></i></div>
+            <div>
+              <div class="module-name">Authority Anchor 3 — Authority Expression</div>
+              <div class="module-role">The Visibility System</div>
+            </div>
+          </div>
+          <div class="module-meta">
+            <span class="meta-pill">2 anchor points</span>
+            <span class="meta-pill">Weeks 8–9</span>
+          </div>
+        </div>
+        <div class="anchor-points">
+          <div class="ap">
+            <div class="ap-num">AP 8</div>
+            <div class="ap-content">
+              <div class="ap-title">Channel selection & TAB recommendation</div>
+              <div class="ap-desc">Not every practitioner belongs on every platform. TAB recommends the right fit — blog, podcast, social, Reddit, or combinations — based on client profile and audience.</div>
+            </div>
+            <span class="ap-tag">Strategy</span>
+          </div>
+          <div class="ap">
+            <div class="ap-num">AP 9</div>
+            <div class="ap-content">
+              <div class="ap-title">System setup, content ecosystem & discoverability applied</div>
+              <div class="ap-desc">Building the repeatable outreach structure. The content container feeds everything — posts, articles, podcasts become extractions, not new creations. Modern SEO and EEAT applied to chosen channels.</div>
+              <div class="ai-note">
+                <i class="ti ti-cpu" aria-hidden="true"></i>
+                <div class="ai-note-text"><em>AI as ethical amplifier.</em> Formatting, scheduling, and repurposing content without stripping the unique voice that makes it worth finding. AI handles the operational layer — the thinking stays human.</div>
+              </div>
+            </div>
+            <span class="ap-tag">Build</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Anchor 4 -->
+      <div class="module m4">
+        <div class="module-header">
+          <div class="module-left">
+            <div class="module-icon"><i class="ti ti-clock" aria-hidden="true"></i></div>
+            <div>
+              <div class="module-name">Authority Anchor 4 — Authority Execution</div>
+              <div class="module-role">The Realistic Timeline</div>
+            </div>
+          </div>
+          <div class="module-meta">
+            <span class="meta-pill">1 anchor point</span>
+            <span class="meta-pill">Week 10</span>
+          </div>
+        </div>
+        <div class="anchor-points">
+          <div class="ap">
+            <div class="ap-num">AP 10</div>
+            <div class="ap-content">
+              <div class="ap-title">Realistic timeline, sustainable rhythm & post-graduation plan</div>
+              <div class="ap-desc">A personalised execution plan. Stopping the chase for likes and vanity metrics. Building habits that keep the ecosystem growing without burnout. Authority building takes months — and that is a competitive advantage, not a weakness.</div>
+              <div class="ai-note">
+                <i class="ti ti-cpu" aria-hidden="true"></i>
+                <div class="ai-note-text"><em>AI as sustainable rhythm tool.</em> Keeping the ecosystem alive and compounding without daily reinvention or manual effort. The system does the heavy lifting — the practitioner feeds it with genuine thinking.</div>
+              </div>
+            </div>
+            <span class="ap-tag">Activation</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline bar -->
+      <div style="margin-top: 1.25rem;">
+        <div style="font-size: 10px; font-weight: 500; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px;">12-week program timeline</div>
+        <div class="timeline-bar">
+          <div class="tbar-seg" style="flex:3; background: var(--color-background-info);">AP 1–3</div>
+          <div class="tbar-seg" style="flex:4; background: var(--color-background-success);">AP 4–7</div>
+          <div class="tbar-seg" style="flex:2; background: var(--color-background-warning);">AP 8–9</div>
+          <div class="tbar-seg" style="flex:1; background: var(--color-background-danger);">AP 10</div>
+          <div class="tbar-seg" style="flex:2; background: var(--color-background-secondary); color: var(--color-text-tertiary);">Wks 11–12</div>
+        </div>
+        <div style="display:flex; gap:4px; margin-top:4px;">
+          <div style="flex:3; font-size:10px; color:var(--color-text-tertiary); text-align:center;">Blueprint</div>
+          <div style="flex:4; font-size:10px; color:var(--color-text-tertiary); text-align:center;">Container</div>
+          <div style="flex:2; font-size:10px; color:var(--color-text-tertiary); text-align:center;">Expression</div>
+          <div style="flex:1; font-size:10px; color:var(--color-text-tertiary); text-align:center;">Execution</div>
+          <div style="flex:2; font-size:10px; color:var(--color-text-tertiary); text-align:center;">Padding</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="connector"><div class="connector-line"></div>anchor point 10 complete<div class="connector-line"></div></div>
+
+  <!-- COMPLETION -->
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-badge badge-completion">Post-program</span>
+      <div>
+        <div class="phase-title">What the client leaves with</div>
+        <div class="phase-subtitle">Not a roadmap. Not recommendations. Actual built assets — and a permanent mindset shift.</div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <div class="outcome-grid">
+        <div class="outcome-card">
+          <div class="outcome-label"><i class="ti ti-layout-grid" aria-hidden="true"></i> Codified framework</div>
+          <div class="outcome-desc">A repeatable methodology that holds its shape without them in the room</div>
+        </div>
+        <div class="outcome-card">
+          <div class="outcome-label"><i class="ti ti-book" aria-hidden="true"></i> Content container</div>
+          <div class="outcome-desc">Authored book or body of articles — the permanent central authority asset</div>
+        </div>
+        <div class="outcome-card">
+          <div class="outcome-label"><i class="ti ti-microphone" aria-hidden="true"></i> Expression system</div>
+          <div class="outcome-desc">Core talking points, story angles, authority topics — ready for keynotes, podcasts, media</div>
+        </div>
+        <div class="outcome-card">
+          <div class="outcome-label"><i class="ti ti-antenna" aria-hidden="true"></i> Visibility ecosystem</div>
+          <div class="outcome-desc">AI-discoverable content structure generating inbound without daily posting</div>
+        </div>
+        <div class="outcome-card">
+          <div class="outcome-label"><i class="ti ti-brain" aria-hidden="true"></i> Mindset shift</div>
+          <div class="outcome-desc">From "I am my story" to "I have a story — and it works for me"</div>
+        </div>
+        <div class="outcome-card">
+          <div class="outcome-label"><i class="ti ti-calendar" aria-hidden="true"></i> Execution timeline</div>
+          <div class="outcome-desc">A realistic, personalised roadmap for sustaining the ecosystem beyond 90 days</div>
+        </div>
+      </div>
+      <div class="truth-box" style="border-color: var(--color-border-secondary); background: var(--color-background-secondary); margin-top: 0.875rem;">
+        <em>Optional integration:</em> Access to the Client Journey Dashboard Setup — so the authority Jean helped them build becomes the foundation of how they serve their own clients.
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><div class="connector-line"></div>the natural next step<div class="connector-line"></div></div>
+
+  <!-- ACL BRIDGE -->
+  <div class="acl-bridge">
+    <div class="acl-bridge-header">
+      <div class="principle-icon" style="background: var(--color-background-warning); border-color: var(--color-border-tertiary);"><i class="ti ti-cpu" style="color: var(--color-text-warning);" aria-hidden="true"></i></div>
+      <div>
+        <div class="phase-title">The Bridge to ACL — AI Clarity Lab</div>
+        <div class="phase-subtitle">For the TAB graduate who wants to go deeper into AI — not as a tool, but as a subject</div>
+      </div>
+      <span class="phase-badge badge-acl" style="margin-left: auto;">Next program</span>
+    </div>
+    <div class="acl-bridge-body">
+      <div class="acl-grid">
+        <div class="acl-col">
+          <strong>What TAB does with AI</strong>
+          AI is a supporting instrument inside the authority-building process. It clarifies, amplifies, and sustains — without replacing the human thinking that makes the work valuable. Clients learn to use AI ethically within a structured methodology.
+        </div>
+        <div class="acl-col">
+          <strong>What ACL goes into</strong>
+          AI as the subject itself. For coaches who want to understand the landscape, navigate the noise, develop their own AI fluency, and help their own clients do the same. TAB builds the authority architecture. ACL builds the AI expertise on top of it.
+        </div>
+      </div>
+      <div class="truth-box" style="border-color: var(--color-text-warning); background: var(--color-background-warning); margin-top: 0.875rem;">
+        <em>TAB and ACL are designed to work together — not as upsells, but as a natural progression.</em> A practitioner who completes TAB arrives at ACL with a codified framework, a structured body of work, and a visibility ecosystem already in place. ACL takes that foundation and adds the AI layer that makes it future-proof.
+      </div>
+    </div>
+  </div>
+
+</div>
